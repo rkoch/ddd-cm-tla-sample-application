@@ -1,0 +1,126 @@
+ContextMap DDDInsuranceMap {
+	contains CustomerSelfServiceContext
+	contains CustomerManagementContext
+	contains PrintingContext
+	contains DebtCollectionContext
+	contains PolicyManagementContext
+	contains RiskManagementContext
+
+	CustomerSelfServiceContext [C]<-[S] CustomerManagementContext
+
+	CustomerManagementContext [ACL]<-[OHS, PL] PrintingContext
+
+	PolicyManagementContext [ACL]<-[OHS, PL] PrintingContext
+
+	DebtCollectionContext [ACL]<-[OHS, PL] PrintingContext
+
+	PolicyManagementContext [SK]<->[SK] DebtCollectionContext
+
+	PolicyManagementContext [CF]<-[OHS, PL] CustomerManagementContext
+
+	RiskManagementContext [P]<->[P] PolicyManagementContext
+}
+
+/*
+ * Domain InsuranceDomain {
+ *     Subdomain User {
+ *         type = CORE_DOMAIN
+
+ *         Entity User
+ *         Entity Address
+ *     }
+ * }
+ */
+BoundedContext CustomerSelfServiceContext   {
+	Aggregate Customer {
+		Entity Customer {
+			aggregateRoot
+			TrackingId trackingId
+		}
+	}
+}
+
+BoundedContext CustomerManagementContext
+
+BoundedContext PrintingContext
+
+BoundedContext DebtCollectionContext
+
+BoundedContext PolicyManagementContext {
+	Aggregate Contract {
+		Entity Contract {
+			aggregateRoot
+
+			- ContractId identifier
+			Customer client
+			- List<Product> products
+
+			Repository ContractRepository {
+				@Contract find(@ContractId contractId);
+			}
+		}
+
+		Entity Policy {
+			int policyNr
+			BigDecimal price
+			- Contract contract
+		}
+
+		ValueObject ContractId {
+			int contractId
+		}
+	}
+
+	Aggregate Product {
+		Entity Product {
+			aggregateRoot
+
+			String productName
+			- ProductId productId
+		}
+
+		ValueObject ProductId {
+			int productId
+		}
+	}
+
+	Aggregate Offer {
+		Entity Offer {
+			aggregateRoot
+
+			- OfferId offerId
+			BigDecimal price
+			Customer client
+			-List<Product> products
+		}
+
+		ValueObject OfferId {
+			int offerId
+		}
+	}
+}
+
+BoundedContext RiskManagementContext 
+
+
+Domain NewDomain {
+	Subdomain NewSubDomain supports Abc {
+		domainVisionStatement "Aims at promoting the following benefit for a hello: i am happy"
+		Entity someone
+		Service AbcService {
+			do_somethinsomeone;
+		}
+	}
+
+}
+
+UserStory Abc {
+	As a "hello" I want to "do somethin" a "someone"
+ so that "i am happy"
+}
+
+UserStory Abc2 {
+	As a "hello" I want to "do something else" a "someone"
+ so that "i am happy"
+}
+
