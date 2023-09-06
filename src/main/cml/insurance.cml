@@ -1,10 +1,12 @@
 ContextMap DDDInsuranceMap {
+		type = ORGANIZATIONAL
 	contains CustomerSelfServiceContext
 	contains CustomerManagementContext
 	contains PrintingContext
 	contains DebtCollectionContext
 	contains PolicyManagementContext
 	contains RiskManagementContext
+	contains CustomersBackofficeTeam
 
 	CustomerSelfServiceContext [C]<-[S] CustomerManagementContext
 
@@ -19,6 +21,8 @@ ContextMap DDDInsuranceMap {
 	PolicyManagementContext [CF]<-[OHS, PL] CustomerManagementContext
 
 	RiskManagementContext [P]<->[P] PolicyManagementContext
+
+	 
 }
 
 /*
@@ -31,6 +35,11 @@ ContextMap DDDInsuranceMap {
  *     }
  * }
  */
+BoundedContext CustomersBackofficeTeam implements NewDomain realizes CustomerSelfServiceContext {
+  type = TEAM
+  domainVisionStatement = "This team is responsible for implementing ..."
+}
+
 BoundedContext CustomerSelfServiceContext   {
 	Aggregate Customer {
 		Entity Customer {
